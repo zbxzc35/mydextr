@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/mydextr" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
