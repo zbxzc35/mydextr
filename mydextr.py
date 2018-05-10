@@ -23,13 +23,15 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QFileDialog
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .mydextr_dialog import MyDextrDialog
+
 import os.path
+import sys
 
 
 class MyDextr:
@@ -185,12 +187,15 @@ class MyDextr:
     def run(self):
         """Run method that performs all the real work"""
         # show the dialog
-        self.dlg.show()
+        # self.dlg.show()
+        self.dlg.openfile()
+        print(self.dlg.filename)
+        demo = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'core/demo.py')
+        os.system("python %s %s" % (demo, self.dlg.filename))
         # Run the dialog event loop
-        result = self.dlg.exec_()
-        print("123123!!!!!test")
+        # result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        # if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            pass
+            # pass

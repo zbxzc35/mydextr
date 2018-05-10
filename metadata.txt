@@ -14,8 +14,7 @@ version=0.1
 author=siriusk
 email=kai475@163.com
 
-about=This plugin is based on DEXTR-KerasTensorflow,
-using it to quickly capture an object through human interactive.
+about=This plugin is based on DEXTR-KerasTensorflow, using it to quickly capture an object through human interactive.
 
 tracker=http://bugs
 repository=http://repo
