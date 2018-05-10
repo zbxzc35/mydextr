@@ -47,7 +47,7 @@ class MyDextrDialog(QtWidgets.QDialog, FORM_CLASS):
     def openfile(self):
         """Clicked open button or start up"""
         self.filename = QFileDialog.getOpenFileName(self, "OpenFile", ".", 
-            "Image Files(*.jpg *.jpeg *.png)")[0]
+            "Image Files(*.jpg *.jpeg)")[0]
         
         
     

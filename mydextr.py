@@ -169,7 +169,13 @@ class MyDextr:
         self.add_action(
             icon_path,
             text=self.tr(u'Open images..'),
-            callback=self.run,
+            callback=self.open,
+            parent=self.iface.mainWindow())
+
+        self.add_action(
+            icon_path,
+            text=self.tr(u'Add extreme points'),
+            callback=self.addextr,
             parent=self.iface.mainWindow())
 
 
@@ -184,14 +190,15 @@ class MyDextr:
         del self.toolbar
 
 
-    def run(self):
+    def open(self):
         """Run method that performs all the real work"""
         # show the dialog
         # self.dlg.show()
         self.dlg.openfile()
         print(self.dlg.filename)
-        demo = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'core/demo.py')
-        os.system("python %s %s" % (demo, self.dlg.filename))
+        self.iface.addRasterLayer(self.dlg.filename)
+        # demo = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'core/demo.py')
+        # os.system("python %s %s" % (demo, self.dlg.filename))
         # Run the dialog event loop
         # result = self.dlg.exec_()
         # See if OK was pressed
@@ -199,3 +206,8 @@ class MyDextr:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             # pass
+    
+    def addextr(self):
+        """add DEXTR points to run algo"""
+        # TODO
+        pass
