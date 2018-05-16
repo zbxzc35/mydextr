@@ -9,7 +9,7 @@ from keras.models import Model
 
 import keras.backend as K
 
-from networks.classifiers import build_pyramid_pooling_module
+from mydextr.dextr.networks.classifiers import build_pyramid_pooling_module
 
 
 def BN(axis, name=""):

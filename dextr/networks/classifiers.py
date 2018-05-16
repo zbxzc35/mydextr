@@ -7,7 +7,7 @@ from keras.layers import Activation
 from keras.layers import Conv2D
 from keras.layers import Layer
 
-from networks import resnet
+from mydextr.dextr.networks import resnet
 import keras.backend as K
 from keras.backend import tf as ktf
 

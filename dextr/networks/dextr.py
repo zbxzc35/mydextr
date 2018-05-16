@@ -5,9 +5,9 @@ from scipy import misc
 from keras import backend as K
 
 import tensorflow as tf
-from networks import resnet
+from mydextr.dextr.networks import resnet
 
-from mypath import Path
+from mydextr.dextr.mypath import Path
 
 
 class DEXTR(object):

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
@@ -21,20 +22,33 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QFileDialog
+from PyQt5.QtWidgets import QAction, QFileDialog, QApplication
+
 
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
 from .mydextr_dialog import MyDextrDialog
 
-import os.path
-import sys
+from qgis.core import *
+from qgis.utils import *
+from qgis.gui import *
 
+import os, sys
 
-class MyDextr:
+# for DEXTR
+from PIL import Image
+import numpy as np
+from keras import backend as K
+
+import tensorflow as tf
+from .dextr.networks.dextr import DEXTR
+from .dextr.mypath import Path
+# from .dextr.helpers import helpers as helpers
+
+class MyDextr(QgsMapTool):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -47,6 +61,8 @@ class MyDextr:
         """
         # Save reference to the QGIS interface
         self.iface = iface
+        # save reference to the mapCanvas
+        self.mCanvas = iface.mapCanvas()
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -72,6 +88,13 @@ class MyDextr:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'MyDextr')
         self.toolbar.setObjectName(u'MyDextr')
+        
+        # for DEXTR
+        self.results = []
+        self.image = None
+        self.canvasAction = ""
+        QgsMapTool.__init__(self, self.mCanvas)
+
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -162,17 +185,18 @@ class MyDextr:
 
         return action
 
+
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
         icon_path = ':/plugins/mydextr/icon.png'
-        self.add_action(
+        self.openButton = self.add_action(
             icon_path,
             text=self.tr(u'Open images..'),
             callback=self.open,
             parent=self.iface.mainWindow())
 
-        self.add_action(
+        self.addPointsButton = self.add_action(
             icon_path,
             text=self.tr(u'Add extreme points'),
             callback=self.addextr,
@@ -196,7 +220,12 @@ class MyDextr:
         # self.dlg.show()
         self.dlg.openfile()
         print(self.dlg.filename)
-        self.iface.addRasterLayer(self.dlg.filename)
+        if self.dlg.filename:
+            self.iface.addRasterLayer(self.dlg.filename)
+            self.image = np.array(Image.open(self.dlg.filename))
+            print(self.image)
+        else:
+            pass
         # demo = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'core/demo.py')
         # os.system("python %s %s" % (demo, self.dlg.filename))
         # Run the dialog event loop
@@ -206,8 +235,29 @@ class MyDextr:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
             # pass
+
     
-    def addextr(self):
+    def addextr(self, event):
         """add DEXTR points to run algo"""
-        # TODO
-        pass
+        filename = self.dlg.filename
+        cLayer = self.mCanvas.currentLayer
+        if filename or cLayer:
+            self.mCanvas.setMapTool(self)
+            modelName = 'dextr_pascal-sbd'
+            pad = 50
+            thres = 0.8
+            gpu_id = 0
+
+            sess = tf.Session()
+            K.set_session(sess)
+
+            with sess.as_default():
+                net = DEXTR(nb_classes=1, resnet_layers=101, input_shape=(512, 512), weights=modelName,
+                            num_input_channels=4, classifier='psp', sigmoid=True)
+                
+                while 1:
+                    # TODO
+                    # extreme_points_ori = np.array().astype(np.int)
+        else:
+            pass
+
